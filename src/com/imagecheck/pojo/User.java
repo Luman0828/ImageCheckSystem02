@@ -5,23 +5,18 @@ public class User {
 	private String userName;
 	private String password;
 	private int identity;
-	private String classId;
-	public String getClassId() {
-		return classId;
-	}
-	public void setClassId(String classid) {
-		this.classId = classid;
-	}
+	
+
 	public User() {
 		super();
 	}
-	public User(String userId, String userName, String password, int identity,String classId) {
+	public User(String userId, String userName, String password, int identity) {
 		super();
 		this.userId = userId;
 		this.userName = userName;
 		this.password = password;
 		this.identity = identity;
-		this.classId=classId;
+	
 	}
 	public String getUserId() {
 		return userId;
