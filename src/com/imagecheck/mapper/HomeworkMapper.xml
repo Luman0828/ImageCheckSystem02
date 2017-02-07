@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imagecheck.mapper.HomeworkMapper">
+	
+    <select id="findResultById" resultType="com.imagecheck.pojo.Homework_Result">
+        select * from homework_result where resultid = #{resultId}
+    </select>
+    <select id="findResultByUserId" resultType="com.imagecheck.pojo.Homework_Result">
+        select * from homework_result where taskid = #{taskId} and userid=#{userId}
+    </select> 
+    <select id="findTaskById" resultType="com.imagecheck.pojo.Homework_Task">
+    	select * from homework_task where taskid = #{taskId}
+    </select>
+    <select id="findTasks" resultType="com.imagecheck.pojo.Homework_Task">
+    	select * from homework_task limit #{start}-1,#{offset}
+    </select>
+    <select id="findResultsByTaskId"  resultType="com.imagecheck.pojo.Homework_Result">
+    	select * from homework_result limit #{start}-1,#{offset}
+    </select>
+    
+    <insert id="addTask" >
+    	insert into homework_task(taskid, name, description, srcpath, functionname) values(#{taskId},#{name},#{description},#{srcpath},#{functionName})
+    </insert>
+    <update id="updateTask">
+    update homework_task set
+    name = #{name},
+    description = #{description},
+    srcpath = #{srcPath},
+    functionname = #{functionName}
+  where taskid = #{taskId}
+  </update>
+    <delete id="deleteTask">
+    delete from homework_task where taskid = #{taskId}</delete>
+    <insert id="addResult">
+    insert into homework_result(taskid, resultid, userid, srcpath, resultpath) values(#{taskId},#{resultId},#{userId},#{srcPath},#{resultPath})
+    </insert>
+    <update id="updateResult">
+    update homework_result set
+    taskid = #{taskId},
+    userid = #{userId},
+    codepath = #{codePath},
+    resultpath = #{resutlPath}
+  	where resultid = #{resultId}
+    </update>
+    <delete id="deleteResult">delete from homework_result where resultid = #{resultId}</delete>
+    <delete id="deleteResults">delete from homework_result where taskid = #{taskId}</delete>
+</mapper>
