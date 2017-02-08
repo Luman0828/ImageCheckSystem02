@@ -3,6 +3,9 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
  <%@page import="com.imagecheck.pojo.*" %>
   <%@page import="com.imagecheck.util.Page" %>
+  <%
+String ctx = request.getContextPath();
+%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -33,7 +36,7 @@
 		<c:forEach items="${tasks }" var="task">
 			<div id="task">
 				<div id="taskName">
-					<c:out value="${task.name }"></c:out>
+					<a href="<%=ctx %>/task?taskId=${task.taskId}"><c:out value="${task.name }"></c:out></a>
 				</div>
 			</div>
 			
@@ -41,12 +44,12 @@
 	</div>
 	<div id="pageController">
 		<c:if test="${page.hasPreviousPage}">
-		<a id="firstPage" href="">首页</a>
-		<a id="backPage" href="">上一页</a>
+		<a id="firstPage" href="<%=ctx%>?page=1">首页</a>
+		<a id="backPage" href="<%=ctx%>?page=${page.page-1}">上一页</a>
 		</c:if>
 		<c:if test="${page.hasNextPage }">
-		<a id="nextPage" href="">下一页</a>
-		<a id="endPage" href="">尾页</a>
+		<a id="nextPage" href="<%=ctx%>?page=${page.page+1}">下一页</a>
+		<a id="endPage" href="<%=ctx%>?page=${page.pageCount}">尾页</a>
 		</c:if>
 	</div>
 </body>
