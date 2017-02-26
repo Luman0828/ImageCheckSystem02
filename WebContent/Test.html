@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<link rel="stylesheet" type="text/css"  href="css/wangEditor.min.css"/>
+<style type="text/css">
+        #editor-trigger {
+            height: 400px;
+            /*max-height: 500px;*/
+        }
+        .container {
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+        }
+    </style>
+   
+</head>
+    <body>
+         <div id="editor-container" class="container">
+        <div id="editor-trigger"><p>请输入内容</p></div>
+        <!-- <textarea id="editor-trigger" style="display:none;">
+            <p>请输入内容...</p>
+        </textarea> -->
+    </div>
+        <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+<script type="text/javascript" src="js/wangEditor.js"></script>
+<script type="text/javascript">
+
+var editor = new wangEditor('editor-trigger');
+editor.onchange = function () {
+    console.log(this.$txt.html());
+};
+editor.config.uploadImgUrl = 'upload';
+editor.config.uploadImgFileName = 'file';
+editor.config.uploadParams = {
+    path: 'images/task',
+   
+};
+
+editor.create();
+
+</script> 
+    </body>
+</html>

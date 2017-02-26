@@ -9,9 +9,7 @@
     <select id="findById" resultType="com.imagecheck.pojo.User">
         select * from user where userid = #{userId}
     </select> 
-    <select id="findByClassid">
-    	select * from user where classid = #{classid}
-    </select>
+
     <!-- 增删暂不需要  -->
     <insert id="insert"></insert>
     <delete id="deleteById"></delete>

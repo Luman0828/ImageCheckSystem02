@@ -11,46 +11,39 @@ String ctx = request.getContextPath();
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>作业提交系统</title>
+<script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+
+<script type="text/javascript" src="js/head-title.js"></script>
+
+<link rel="stylesheet" type="text/css"  href="css/style.css"/>
+
 </head>
 <body>
 	
-	<div id="title">
-		<c:choose>
-			<c:when test="${empty user}">
-				<div id="hint">
-					未登录,请
-				</div>
-				
-				<button id="login">登陆</button>
-				
-			</c:when>
-			<c:otherwise>
-				<div id=username>
-					${user.userName}
-				</div>
-				<button id="logout">注销</button>
-			</c:otherwise>
-		</c:choose>
+	<div id="head-title">
+		
 	</div>
 	<div id="taskList">
 		<c:forEach items="${tasks }" var="task">
 			<div id="task">
-				<div id="taskName">
-					<a href="<%=ctx %>/task?taskId=${task.taskId}"><c:out value="${task.name }"></c:out></a>
+				<div id="taskTitle">
+					<a href="task?taskId=${task.taskId}"><c:out value="${task.title }"></c:out></a>
 				</div>
 			</div>
 			
 		</c:forEach>
 	</div>
 	<div id="pageController">
-		<c:if test="${page.hasPreviousPage}">
-		<a id="firstPage" href="<%=ctx%>?page=1">首页</a>
-		<a id="backPage" href="<%=ctx%>?page=${page.page-1}">上一页</a>
+		
+		<c:if test="${page.hasPrePage}">
+		<a id="firstPage" href="<%=ctx%>?page=1" >首页</a>
+		<a id="backPage" href="<%=ctx%>?page=${page.currentPage-1}">上一页</a>
 		</c:if>
 		<c:if test="${page.hasNextPage }">
-		<a id="nextPage" href="<%=ctx%>?page=${page.page+1}">下一页</a>
-		<a id="endPage" href="<%=ctx%>?page=${page.pageCount}">尾页</a>
+		<a id="nextPage" href="<%=ctx%>?page=${page.currentPage+1}">下一页</a>
+		<a id="endPage" href="<%=ctx%>?page=${page.totalPage}">尾页</a>
 		</c:if>
 	</div>
+
 </body>
 </html>

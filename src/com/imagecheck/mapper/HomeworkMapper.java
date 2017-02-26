@@ -9,15 +9,17 @@ import com.imagecheck.pojo.Homework_Task;
 
 public interface HomeworkMapper {
 	public Homework_Result findResultById(@Param("resultId")int resultId);
-	public Homework_Result findResultByUserId(@Param("userId")int userId,@Param("taskId")int taskId);
+	public Homework_Result findResultByUserId(@Param("userId")String userId,@Param("taskId")int taskId);
 	public Homework_Task findTaskById(@Param("taskId")int taskId);
 	public List<Homework_Task> findTasks(@Param("start")int start,@Param("offset")int offset);
 	public List<Homework_Result> findResultsByTaskId(@Param("taskId")int taskId, @Param("start")int start,@Param("offset")int offset);
-	public boolean addTask(@Param("task")Homework_Task task);
-	public boolean updateTask(@Param("task")Homework_Task task);
-	public boolean deleteTask(@Param("taskId")int taskId);
-	public boolean addResult(@Param("result")Homework_Result result);
-	public boolean updateResult(@Param("result")Homework_Result result);
-	public boolean deleteResult(@Param("resultId")int resultId);
-	public boolean deleteResults(@Param("taskId")int taskId);
+	public int findTasksCount();
+	public int findResultCountByTaskId(@Param("taskId")int taskId);
+	public Integer addTask(@Param("task")Homework_Task task);
+	public int updateTask(@Param("task")Homework_Task task);
+	public int deleteTask(@Param("taskId")int taskId);
+	public Integer addResult(@Param("result")Homework_Result result);
+	public int updateResult(@Param("result")Homework_Result result);
+	public int deleteResult(@Param("resultId")int resultId);
+	public int deleteResults(@Param("taskId")int taskId);
 }

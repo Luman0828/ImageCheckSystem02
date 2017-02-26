@@ -14,36 +14,45 @@
     	select * from homework_task where taskid = #{taskId}
     </select>
     <select id="findTasks" resultType="com.imagecheck.pojo.Homework_Task">
-    	select * from homework_task limit #{start}-1,#{offset}
+    	select * from homework_task order by taskid desc limit #{start},#{offset}
     </select>
     <select id="findResultsByTaskId"  resultType="com.imagecheck.pojo.Homework_Result">
-    	select * from homework_result limit #{start}-1,#{offset}
+    	select * from homework_result order by resultid desc limit #{start},#{offset}
     </select>
     
+    <select id="findTasksCount" resultType="java.lang.Integer">
+    	select count(1) from homework_task
+    </select>
+    <select id="findResultCountByTaskId" resultType="java.lang.Integer">
+    	select count(1) from homework_result where taskid=#{taskId}
+    </select>
+    	
     <insert id="addTask" >
-    	insert into homework_task(taskid, name, description, srcpath, functionname) values(#{taskId},#{name},#{description},#{srcpath},#{functionName})
+    	insert into homework_task(taskid, title, description, srcpath, functionname) values(#{task.taskId},#{task.title},#{task.description},#{task.srcPath},#{task.functionName})
     </insert>
     <update id="updateTask">
     update homework_task set
-    name = #{name},
-    description = #{description},
-    srcpath = #{srcPath},
-    functionname = #{functionName}
-  where taskid = #{taskId}
+    title = #{task.title},
+    description = #{task.description},
+    srcpath = #{task.srcPath},
+    functionname = #{task.functionName}
+  where taskid = #{task.taskId}
   </update>
     <delete id="deleteTask">
     delete from homework_task where taskid = #{taskId}</delete>
     <insert id="addResult">
-    insert into homework_result(taskid, resultid, userid, srcpath, resultpath) values(#{taskId},#{resultId},#{userId},#{srcPath},#{resultPath})
+    insert into homework_result(taskid, resultid, userid, description, resultpath) values(#{result.taskId},#{result.resultId},#{result.userId},#{result.description},#{result.resultPath})
     </insert>
     <update id="updateResult">
     update homework_result set
-    taskid = #{taskId},
-    userid = #{userId},
-    codepath = #{codePath},
-    resultpath = #{resutlPath}
-  	where resultid = #{resultId}
+    taskid = #{result.taskId},
+    userid = #{result.userId},
+    description = #{result.description},
+    resultpath = #{result.resutlPath}
+  	where resultid = #{result.resultId}
     </update>
     <delete id="deleteResult">delete from homework_result where resultid = #{resultId}</delete>
     <delete id="deleteResults">delete from homework_result where taskid = #{taskId}</delete>
+    
+   
 </mapper>

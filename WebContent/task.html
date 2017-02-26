@@ -1,0 +1,321 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>作业详情</title>
+<script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+<script type="text/javascript" src="js/head-title.js"></script>
+<link rel="stylesheet" type="text/css"  href="css/style.css"/>
+<link rel="stylesheet" type="text/css"  href="css/wangEditor.min.css"/>
+<script type="text/javascript">
+$(function(){
+	var taskId;
+	$.getJSON("taskInit",{},function(data){ 
+		taskId=data['taskId'];
+		$("#download").html('<a>下载作业文件</a>');
+		
+		if(data['srcPath']==null){
+			$('#download a').attr("disabled", true);
+		}else{
+			$('#download a').attr('href',"download?path="+data['srcPath']+"&fileName="+data['title']);
+		}
+		
+		$("#title p").html(data['title']);
+		$.ajax({
+			type: "GET",
+			async: false,
+		    url: "description", 
+		    dataType: "html",
+		    data:{
+		    	path:data['description'],
+		    },
+		    success : function(data){
+		    	
+		    	$("#description-html").html(data);
+		    	
+		    	}    
+		    }		
+		);
+	});
+	
+	$.getJSON("log",{method:"getUser"},function(data){ 
+
+    		if(data["identify"]=="1"){
+    			$("#head-title").append('<a class="function" id="updateTask" href="addTask.html?taskId='+taskId+'">修改作业</a>'+'<a class=function id="deleteTask" href="deleteTask?taskId='+taskId+'">删除作业</a>');
+    			
+    			
+    		}
+    	
+	});	
+	
+	
+$('#showSubmit').click(function(){
+	
+
+	if($("#submitArea").is(":hidden")){
+	       $("#submitArea").show();    //如果元素为隐藏,则将它显现
+	}else{
+	      $("#submitArea").hide();     //如果元素为显现,则将其隐藏
+	}
+});
+
+
+
+
+submit=function(){
+	
+	
+	$("#submit").attr("disabled", true);
+	
+	var resultSrc=$("#src");
+	
+	
+	
+	var srcFile=resultSrc[0].files[0];
+	
+	
+	var resultSrcVal=resultSrc.val();
+	
+	
+	var strs = resultSrcVal.split("\\");
+	var srcName=strs[strs.length-1];
+	var descriptionVal="";
+	if("undefined" != typeof editor){ 
+		descriptionVal=editor.$txt.html();
+		}
+		$.ajax({
+			type: "GET",
+			async: false,
+	        url: "log?method=getUser", 
+	        dataType: "json",
+	        data:{
+	        },
+	        success : function(data){
+	        	if(data['msg']=="NotLogin"){
+	        		alert("未登录用户");
+	        		return false;
+	        		} else if(data['msg']=="Login"){
+	        			if(resultSrcVal!=""){
+	        				var formData = new FormData();
+		        			
+		        			formData.append("file",srcFile);
+		        			formData.append("path","WEB-INF/result/src");
+
+
+		        			
+		        			 $.ajax({
+		        				type:"POST",
+		        				async:false,
+		        				url:"upload",
+		        				processData : false, 
+		        				contentType : false,
+		        				dataType:"text",
+		        				data:formData,
+		        				success:function(data){
+		        					
+		        					if(/^WEB-INF\/result\/src.*$/.test(data)){
+		        						
+		        						$.ajax({
+		        							type:'POST',
+		        							async:false,
+		        							url:'addResult',
+		        							dataType:'text',
+		        							data:{
+		        								decription : descriptionVal,
+		        								taskId : getParam('taskId'),
+		        								srcPath :data
+		        							},
+		        							success:function(data){
+
+					        					if(data=="success"){
+					        						alert("发布成功");
+					        						window.location.href="/ImageCheckSystem02";
+					        						
+					        					}else{
+					        						alert("系统错误："+data);
+					        						return false;
+					        					}
+		        							}
+		        						});
+		        					}
+		        					else{
+		        						alert('文件上传失败：'+data);
+		        						return false;
+		        					}
+		        					
+		        				}
+		        			}); 
+	        			}
+
+
+
+
+	        			else{
+	        	
+	        						
+	        						$.ajax({
+	        							type:'POST',
+	        							async:false,
+	        							url:'addTask',
+	        							dataType:'text',
+	        							data:{
+	        								description : editor.$txt.html(),
+	        								title : taskTitleVal,
+	        							},
+	        							success:function(data){
+
+				        					if(data=="success"){
+				        						alert("发布成功");
+				        						window.location.href="/ImageCheckSystem02";
+				        						
+				        					}else{
+				        						alert("系统错误："+data);
+				        						return false;
+				        					}
+	        							}
+	        						});
+	        			}
+	        					
+	        		}
+	        	}
+	        }		
+		);
+	
+
+};
+$("#submit").on('click',function(){
+	submit();
+});
+function getParam(paramName) {  
+    paramValue = "", isFound = !1;  
+    if (this.location.search.indexOf("?") == 0 && this.location.search.indexOf("=") > 1) {  
+        arrSource = unescape(this.location.search).substring(1, this.location.search.length).split("&"), i = 0;  
+        while (i < arrSource.length && !isFound) arrSource[i].indexOf("=") > 0 && arrSource[i].split("=")[0].toLowerCase() == paramName.toLowerCase() && (paramValue = arrSource[i].split("=")[1], isFound = !0), i++  
+    }  
+    return paramValue == "" && (paramValue = null), paramValue  
+} ;
+})
+
+	
+</script>
+</head>
+<body>
+	<div id="head-title"></div>
+	<div id="task">
+		<div id="title">
+			<p></p>
+		</div>
+		<div id="download">
+			
+			
+		</div>
+		<button onclick="javascript:void(0);" id="readResultsBtn">查看作业</button>
+		<div id="description-html"></div>
+		<div id="upload">
+			<button id='showSubmit'>提交作业</button>
+			<div id='submitArea' style="display:none;">
+			<div id="file"><input type="file" id='src' ></div>
+			<button id='showEditor'>作业报告</button>
+			<div id="editor-container" class="container" style="display:none;">
+			<div id="description"></div>
+			</div>
+			<button id='submit'>提交</button>
+			</div>
+		</div>
+		<div id="readResults" >
+		
+		<div id="ResultsList"></div>
+		</div>
+	</div>
+	
+        <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+<script type="text/javascript" src="js/wangEditor.js"></script>
+<script type="text/javascript">
+$(function(){
+	function getParam(paramName) {  
+	    paramValue = "", isFound = !1;  
+	    if (this.location.search.indexOf("?") == 0 && this.location.search.indexOf("=") > 1) {  
+	        arrSource = unescape(this.location.search).substring(1, this.location.search.length).split("&"), i = 0;  
+	        while (i < arrSource.length && !isFound) arrSource[i].indexOf("=") > 0 && arrSource[i].split("=")[0].toLowerCase() == paramName.toLowerCase() && (paramValue = arrSource[i].split("=")[1], isFound = !0), i++  
+	    }  
+	    return paramValue == "" && (paramValue = null), paramValue  
+	};
+	resultInit=function(){
+		$.getJSON("resultInit",{taskId:getParam('taskId')},function(data){ 
+			taskId=data['taskId'];
+			$("#file").append('<a>下载文件</a>');
+			
+			if(data['resultPath']==null){
+				$('#file a').attr("disabled", true);
+			}else{
+				$('#file a').attr('href',"download?path="+data['resultPath']+"&fileName="+$('#username').val()+'的作业');
+			}
+			
+			
+			$.ajax({
+				type: "GET",
+				async: false,
+			    url: "description", 
+			    dataType: "html",
+			    data:{
+			    	path:data['description'],
+			    },
+			    success : function(data){
+			    	
+			    	editor.$txt.html(data)
+			    	
+			    	}    
+			    }		
+			);
+		});
+	}
+	
+$("#showEditor").click(function(){
+		
+		
+		if($("#editor-container").is(":hidden")){
+		       $("#editor-container").show();    //如果元素为隐藏,则将它显现
+		       editor.undestroy();
+		}else{
+		      $("#editor-container").hide();    //如果元素为显现,则将其隐藏
+		      editor.destroy();		
+		}
+		
+		
+	});
+	
+	createEditor=function(){
+		var editor = new wangEditor('description');
+		editor.onchange = function () {
+		    console.log(this.$txt.html());
+		};
+		editor.config.uploadImgUrl = 'upload';
+		editor.config.uploadImgFileName = 'file';
+		editor.config.uploadParams = {
+		    path: 'images/result',
+		   
+		};
+		editor.config.menus = $.map(wangEditor.config.menus, function(item, key) {
+		         if (item === 'emotion') {
+		             return null;
+		         }
+		         if (item === 'video') {
+		             return null;
+		         }
+		         if (item === 'location') {
+		             return null;
+		         }
+		         return item;
+		     });
+		editor.create();
+		return editor;
+	}
+	var editor=createEditor();
+})
+	
+
+
+</script> 	
+</body>
+</html>

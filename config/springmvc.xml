@@ -10,12 +10,41 @@
     http://www.springframework.org/schema/context/spring-context.xsd  
     http://www.springframework.org/schema/mvc   
     http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
-
+	<!-- 中文乱码处理 -->
+    <bean
+        class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <bean
+                    class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
+                <bean
+                    class="org.springframework.http.converter.StringHttpMessageConverter">
+                    <property name="supportedMediaTypes">
+                        <list>
+                            <value>text/plain;charset=UTF-8</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean
+                    class="org.springframework.http.converter.ResourceHttpMessageConverter" />
+                <bean
+                    class="org.springframework.http.converter.xml.SourceHttpMessageConverter" />
+                <bean
+                    class="org.springframework.http.converter.xml.XmlAwareFormHttpMessageConverter" />
+                <bean
+                    class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter" />
+            </list>
+        </property>
+    </bean>
     <!-- 启用spring mvc 注解 -->
     <context:annotation-config />
-
+	<mvc:annotation-driven/> 
     <!-- 设置使用注解的类所在的jar包 -->
     <context:component-scan base-package="com.imagecheck.controller"/>
+    
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">  
+    	<property name="maxUploadSize" value="102400000"></property>  
+	</bean>
     
     <!-- 完成请求和注解POJO的映射 -->
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />

@@ -1,0 +1,289 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+
+
+
+<head>
+
+<title>布置作业</title>
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<meta name="author" content="The Man in Blue" />
+<meta name="robots" content="all" />
+<meta name="MSSmartTagsPreventParsing" content="true" />
+<meta name="description" content="" />
+<meta name="keywords" content="" />
+
+<style type="text/css" media="all">
+	@import "css/style.css";
+
+	@import "css/widgEditor.css";
+	@import "css/widgContent.css";
+</style>
+
+<script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+<link rel="stylesheet" type="text/css"  href="css/wangEditor.min.css"/>
+<script type="text/javascript" src="js/head-title.js"></script>
+
+<script type="text/javascript" src="js/jquery-form.js"></script>
+<script type="text/javascript">
+function getParam(paramName) {  
+    paramValue = "", isFound = !1;  
+    if (this.location.search.indexOf("?") == 0 && this.location.search.indexOf("=") > 1) {  
+        arrSource = unescape(this.location.search).substring(1, this.location.search.length).split("&"), i = 0;  
+        while (i < arrSource.length && !isFound) arrSource[i].indexOf("=") > 0 && arrSource[i].split("=")[0].toLowerCase() == paramName.toLowerCase() && (paramValue = arrSource[i].split("=")[1], isFound = !0), i++  
+    }  
+    return paramValue == "" && (paramValue = null), paramValue  
+};
+	$(function(){
+		
+		submit=function(){
+			
+		
+			$("#submit").attr("disabled", true);
+			
+			var taskTitle=$("#taskTitle input");
+			
+			var taskSrc=$("#src input");
+			
+			
+			var taskTitleVal=taskTitle.val();
+			var taskSrcFile=taskSrc[0].files[0];
+			
+			
+			var taskSrcVal=taskSrc.val();
+			
+			
+			var strs = taskSrcVal.split("\\");
+			var srcName=strs[strs.length-1];
+			
+			if(taskTitleVal==""){
+				alert("请输入标题");
+				taskTitle.focus();
+				return false;
+			}else if(taskSrcVal==""&&editor.$txt.html()==""){
+				alert('附件和任务描述不能同时为空');
+				taskNoise.focus();
+				return false;
+				
+			} 
+			else{
+				
+				$.ajax({
+					type: "GET",
+					async: false,
+			        url: "log?method=getUser", 
+			        dataType: "json",
+			        data:{
+			        },
+			        success : function(data){
+			        	if(data['msg']=="NotLogin"){
+			        		alert("未登录用户");
+			        		return false;
+			        		} else if(data['msg']=="Login"){
+			        			if(taskSrcVal!=""){
+			        				var formData = new FormData();
+				        			
+				        			formData.append("file",taskSrcFile);
+				        			formData.append("path","WEB-INF/task/src");
+
+
+				        			
+				        			 $.ajax({
+				        				type:"POST",
+				        				async:false,
+				        				url:"upload",
+				        				processData : false, 
+				        				contentType : false,
+				        				dataType:"text",
+				        				data:formData,
+				        				success:function(data){
+				        					
+				        					if(/^WEB-INF\/task\/src.*$/.test(data)){
+				        						
+				        						$.ajax({
+				        							type:'POST',
+				        							async:false,
+				        							url:'addTask',
+				        							dataType:'text',
+				        							data:{
+				        								decription : editor.$txt.html(),
+				        								title : taskTitleVal,
+				        								srcPath :data,
+				        							},
+				        							success:function(data){
+
+							        					if(data=="success"){
+							        						alert("发布成功");
+							        						window.location.href="/ImageCheckSystem02";
+							        						
+							        					}else if(data=="IdentifyWrong"){
+							        						alert('身份有误');
+							        					}
+							        					else{
+							        						alert("系统错误："+data);
+							        						return false;
+							        					}
+				        							}
+				        						});
+				        					}
+				        					else{
+				        						alert('文件上传失败：'+data);
+				        						return false;
+				        					}
+				        					
+				        				}
+				        			}); 
+			        			}
+	
+		
+
+
+			        			else{
+			        	
+			        						
+			        						$.ajax({
+			        							type:'POST',
+			        							async:false,
+			        							url:'addTask',
+			        							dataType:'text',
+			        							data:{
+			        								description : editor.$txt.html(),
+			        								title : taskTitleVal,
+			        								taskId:getParam("taskId"),
+			        							},
+			        							success:function(data){
+
+						        					if(data=="success"){
+						        						alert("发布成功");
+						        						window.location.href="/ImageCheckSystem02";
+						        						
+						        					}else{
+						        						alert("系统错误："+data);
+						        						return false;
+						        					}
+			        							}
+			        						});
+			        			}
+			        					
+			        		}
+			        	}
+			        }		
+				);
+			}
+
+		};
+		$("#submit").on('click',function(){
+			submit();
+		})
+	
+	});
+	
+
+</script>
+<style type="text/css">
+        #description {
+            height: 400px;
+            /*max-height: 500px;*/
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            position: relative;
+        }
+    </style>
+</head>
+
+
+
+<body>
+	<div id="head-title">
+		 
+
+	</div>
+<!-- END experimentInfo -->
+	
+	<div id="taskTitle">
+		<p>输入标题</p>
+		<input type="text" name="title"></input>
+	</div>
+	<div id="src">
+	<p>附件</p>
+	<input type="file" name="file"></input>
+	</div>
+	<div id="editor-container" class="container">
+	<div id="description"></div>
+	</div>
+	<div><input type="button" id="submit" value="提交"/></div>
+<!-- END content -->
+
+        <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+<script type="text/javascript" src="js/wangEditor.js"></script>
+<script type="text/javascript">
+
+function getParam(paramName) {  
+    paramValue = "", isFound = !1;  
+    if (this.location.search.indexOf("?") == 0 && this.location.search.indexOf("=") > 1) {  
+        arrSource = unescape(this.location.search).substring(1, this.location.search.length).split("&"), i = 0;  
+        while (i < arrSource.length && !isFound) arrSource[i].indexOf("=") > 0 && arrSource[i].split("=")[0].toLowerCase() == paramName.toLowerCase() && (paramValue = arrSource[i].split("=")[1], isFound = !0), i++  
+    }  
+    return paramValue == "" && (paramValue = null), paramValue  
+};
+
+var editor = new wangEditor('description');
+editor.onchange = function () {
+    console.log(this.$txt.html());
+};
+editor.config.uploadImgUrl = 'upload';
+editor.config.uploadImgFileName = 'file';
+editor.config.uploadParams = {
+    path: 'images/task',
+   
+};
+editor.config.menus = $.map(wangEditor.config.menus, function(item, key) {
+         if (item === 'emotion') {
+             return null;
+         }
+         if (item === 'video') {
+             return null;
+         }
+         if (item === 'location') {
+             return null;
+         }
+         return item;
+     });
+editor.create();
+var taskId=getParam("taskId");
+if(taskId!=null&&taskId!=""){
+	$.getJSON("taskInit",{taskId:getParam("taskId")},function(data){ 
+		
+		$("#taskTitle input").val(data['title']);
+		
+		$.ajax({
+			type: "GET",
+			async: false,
+		    url: "description", 
+		    dataType: "html",
+		    data:{
+		    	path:data['description'],
+		    },
+		    success : function(data){
+		    	
+		    	editor.$txt.html(data);
+		    	
+		    	}    
+		    }		
+		);
+	});
+};
+
+
+</script> 
+</body>
+
+
+
+
+</html>

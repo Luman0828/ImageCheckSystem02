@@ -14,7 +14,7 @@
     <context:component-scan base-package="com.imagecheck.mapper"/>
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
         <property name="driverClass" value="com.mysql.jdbc.Driver" />
-        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/test" />
+        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/imagecheck_db" />
         <property name="user" value="root" />
         <property name="password" value="" />
         <property name="maxPoolSize" value="20" />
